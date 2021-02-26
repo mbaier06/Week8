@@ -41,13 +41,22 @@ firebase.auth().onAuthStateChanged(async function(user) {
     })
 
     // Show only my to-dos
-    let querySnapshot = await db.collection('todos').where('userId', '==', user.uid).get()
-    console.log(`Number to todos in collection: ${querySnapshot.size}`)
+    // let querySnapshot = await db.collection('todos').where('userId', '==', user.uid).get()
+    // console.log(`Number to todos in collection: ${querySnapshot.size}`)
 
-    let todos = querySnapshot.docs
+    // let todos = querySnapshot.docs
+
+    //Step 4
+    let response = await fetch(`http://localhost:8888/.netlify/functions/get_todos?userId=${user.uid}`)
+    let todos = await response.json()
+
     for (let i=0; i<todos.length; i++) {
-      let todoId = todos[i].id
-      let todo = todos[i].data()
+      // let todoId = todos[i].id
+      // let todo = todos[i].data()
+      // let todoText = todo.text
+
+      let todo = todos[i]
+      let todoId = todo.id
       let todoText = todo.text
 
       document.querySelector('.todos').insertAdjacentHTML('beforeend', `
@@ -104,7 +113,7 @@ firebase.auth().onAuthStateChanged(async function(user) {
 // Step 0:  Setup. Start your server in the Terminal using the command `netlify dev`.
 //          Visit /.netlify/functions/test in the browser to confirm the server is running and you can access it.
 //          Add firebase config into todos.html and verify frontend application still works as it did last week.
-//          Add firebase config into netlify/functions/firebase.js so that the backend also has access to firebase.
+//          Add firebase config into netlify/functions/firebase.js so that the backend also has access to firebase. --> Done in firebase.js and todos.html
 // Step 1:  Read data from firestore in the backend. In the netlify function get_todos.js, retrieve all of the todos from firestore.
 //          Console log the number of todos to confirm it's reading the data.
 // Step 2:  Build the API response. Loop through the todos collection. The backend has no access to manipulate the DOM, so instead we'll expose the desired data to the frontend.

@@ -42,15 +42,20 @@ firebase.auth().onAuthStateChanged(async function(user) {
     })
 
     // 🔥 LAB STARTS HERE 🔥
-    let querySnapshot = await db.collection('posts').orderBy('created').get()
-    let posts = querySnapshot.docs
+    let response = await fetch(`http://localhost:8888/.netlify/functions/get_posts`)
+    let posts = await response.json()
     for (let i=0; i<posts.length; i++) {
       let postId = posts[i].id
-      let postData = posts[i].data()
-      let postUsername = postData.username
-      let postImageUrl = postData.imageUrl
-      let querySnapshot = await db.collection('likes').where('postId', '==', postId).get()
-      let postNumberOfLikes = querySnapshot.size
+      // let postData = posts[i].data()
+      // let postUsername = postData.username
+      // let postImageUrl = postData.imageUrl
+
+      let postUsername = posts[i].username
+      let postImageURL = posts[i].imageUrl
+
+      // let querySnapshot = await db.collection('likes').where('postId', '==', postId).get()
+      // let postNumberOfLikes = querySnapshot.size
+      let postNumberOfLikes = posts[i].likes
       renderPost(postId, postUsername, postImageUrl, postNumberOfLikes)
     }
     // 🔥 LAB ENDS HERE 🔥
